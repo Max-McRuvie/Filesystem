@@ -1,0 +1,46 @@
+# Compiler and flags
+CC = gcc
+CFLAGS = -Wall -g
+
+# Linker flags (Windows Winsock)
+LDFLAGS = -lws2_32
+
+# Directories
+BUILD_DIR = build
+OBJ_DIR = $(BUILD_DIR)/repository
+SRC_DIR = src
+INC_DIR = inc
+
+# Source files
+SRCS = $(SRC_DIR)/main.c
+
+# Object files (inside build/repository/)
+OBJS = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(SRCS))
+
+# Executable path
+EXEC = $(BUILD_DIR)/filesystem.exe
+
+# Include flags
+INCS = -I$(INC_DIR)
+
+.PHONY: all clean
+
+all: $(EXEC)
+
+# Build executable
+$(EXEC): $(OBJS) | $(BUILD_DIR)
+	$(CC) $(CFLAGS) $(INCS) -o $@ $(OBJS) $(LDFLAGS)
+
+# Compile source files to object files
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c | $(OBJ_DIR)
+	$(CC) $(CFLAGS) $(INCS) -c $< -o $@
+
+# Create build directories if they don't exist
+$(BUILD_DIR):
+	mkdir -p $@
+
+$(OBJ_DIR):
+	mkdir -p $@
+
+clean:
+	rm -rf $(BUILD_DIR)
