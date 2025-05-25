@@ -111,7 +111,7 @@ int lsh_execute(char **args) {
     return 1;
 }
 
-void lsh_loop(){
+void lsh_loop(void){
     char path[1024];
     char *line;
     char **args;

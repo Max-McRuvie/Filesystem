@@ -8,7 +8,7 @@
 static Node* root = NULL;
 static Node* current_dir = NULL;
 
-void fs_init() {
+void fs_init(void) {
     root = malloc(sizeof(Node));
     strcpy(root->name, "/");
     root->type = FOLDER_NODE;
