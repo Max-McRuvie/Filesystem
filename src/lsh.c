@@ -1,6 +1,8 @@
+#include "lsh.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "file_system.h"
 
 // Defines the initial buffer size for reading input lines
 #define LSH_RL_BUFSIZE 1024
@@ -90,12 +92,15 @@ int lsh_execute(char **args) {
 }
 
 void lsh_loop(){
+    char path[1024];
     char *line;
     char **args;
     int status;
 
     do {
-        printf("> ");
+        fs_get_path(path, sizeof(path));
+        printf("%s > ", path);
+
         line = lsh_read_line();
         args = lsh_split_line(line);
         status = lsh_execute(args);
