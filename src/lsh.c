@@ -27,7 +27,12 @@ char *lsh_read_line(void){
         c = getchar();
 
         // If we hit EOF, replace it with a null character and return
-        if (c == EOF || c == '\n') {
+        if (c == EOF) {
+            free(buffer);
+            return NULL; // EOF detected
+        }
+        
+        if (c == '\n') {
             buffer[position] = '\0';
             return buffer;
         } else {
@@ -122,6 +127,19 @@ void lsh_loop(void){
         printf("%s > ", path);
 
         line = lsh_read_line();
+
+        if (line == NULL) {
+            // EOF encountered, exit shell cleanly
+            printf("\n");
+            break;
+        }
+
+        if (strlen(line) == 0) {
+            // Empty input, reprompt
+            free(line);
+            continue;
+        }
+
         args = lsh_split_line(line);
         status = lsh_execute(args);
 
