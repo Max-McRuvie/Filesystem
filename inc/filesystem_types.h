@@ -9,6 +9,7 @@ typedef struct Node {
     struct Node* parent;
     struct Node* next_sibling;
     struct Node* first_child; // Only meaningful for folders
+    char *content; // Only meaningful for files
 } Node;
 
 #endif // FILESYSTEM_TYPES_H

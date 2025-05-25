@@ -111,6 +111,15 @@ int lsh_execute(char **args) {
         return 1;
     }
 
+    if (strcmp(args[0], "touch") == 0) { 
+        if (args[1]) {
+            fs_touch(args[1]);
+        } else {
+            printf("touch: missing argument\n");
+        }
+        return 1;
+    }
+
     if (strcmp(args[0], "ls") == 0) { 
         fs_ls();
         return 1;

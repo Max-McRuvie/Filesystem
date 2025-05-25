@@ -15,6 +15,7 @@ void fs_init(void) {
     root->parent = NULL;
     root->next_sibling = NULL;
     root->first_child = NULL;
+    root->content = NULL;
 
     current_dir = root;
 }
@@ -33,6 +34,7 @@ void fs_mkdir(char *name) {
     new_dir->parent = current_dir;
     new_dir->first_child = NULL;
     new_dir->next_sibling = NULL;
+    new_dir->content = NULL;
 
     if (current_dir->first_child == NULL) {
         current_dir->first_child = new_dir;
@@ -81,6 +83,33 @@ void fs_ls(void) {
         child = child->next_sibling;
     }
     printf("\n");
+}
+
+void fs_touch(char *name) {
+    Node *new_file = malloc(sizeof(Node));
+    if (!new_file) {
+        fprintf(stderr, "fs: allocation error\n");
+        exit(EXIT_FAILURE);
+    }
+
+    strncpy(new_file->name, name, sizeof(new_file->name) - 1);
+    new_file->name[sizeof(new_file->name) - 1] = '\0';
+
+    new_file->type = FILE_NODE;
+    new_file->parent = current_dir;
+    new_file->first_child = NULL;
+    new_file->next_sibling = NULL;
+    new_file->content = NULL;
+
+    if (current_dir->first_child == NULL) {
+        current_dir->first_child = new_file;
+    } else {
+        Node *sibling = current_dir->first_child;
+        while (sibling->next_sibling != NULL) {
+            sibling = sibling->next_sibling;
+        }
+        sibling->next_sibling = new_file;
+    }
 }
 
 void fs_get_path(char *buffer, size_t size) {
