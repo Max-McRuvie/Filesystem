@@ -31,11 +31,18 @@ void fs_mkdir(char *name) {
 
     new_dir->type = FOLDER_NODE;
     new_dir->parent = current_dir;
-    current_dir->first_child = new_dir;
     new_dir->first_child = NULL;
+    new_dir->next_sibling = NULL;
 
-    new_dir->next_sibling = current_dir->first_child;
-    current_dir->first_child = new_dir;
+    if (current_dir->first_child == NULL) {
+        current_dir->first_child = new_dir;
+    } else {
+        Node *sibling = current_dir->first_child;
+        while (sibling->next_sibling != NULL) {
+            sibling = sibling->next_sibling;
+        }
+        sibling->next_sibling = new_dir;
+    }
 }
 
 void fs_cd(char *name) {
