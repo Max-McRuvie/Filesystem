@@ -112,6 +112,35 @@ void fs_touch(char *name) {
     }
 }
 
+fs_write(char *filename, char *text) {
+    Node *child = current_dir->first_child;
+
+    while (child) {
+        if(child->type == FILE_NODE && strcmp(child->name, filename) == 0){
+            free(child->content);
+            child->content = strdup(text);
+            return;
+        }
+        child = child->next_sibling;
+    }
+    printf("write: file '%s' not found\n", filename);
+}
+
+fs_read(char *filename) {
+    Node *child = current_dir->first_child;
+
+    while (child) {
+        if(child->type == FILE_NODE && strcmp(child->name, filename) == 0){
+            printf("%s \n", child->content);
+            return;
+        } else {
+            printf("[empty file]\n");
+        }
+        child = child->next_sibling;
+    }
+    printf("read: file '%s' not found\n", filename);
+}
+
 void fs_get_path(char *buffer, size_t size) {
     if(!current_dir) {
         snprintf(buffer, size, "/");

@@ -120,6 +120,31 @@ int lsh_execute(char **args) {
         return 1;
     }
 
+    if (strcmp(args[0], "write") == 0) { 
+        if (args[1] && args[2]) {
+            char text[1024] = "";
+
+            for (int i = 2; args[i] != NULL; i++) {
+                strcat(text, args[i]);
+                if (args[i + 1]) strcat(text, " ");
+            }
+
+            fs_write(args[1], text);
+        } else {
+            printf("write: missing argument\n");
+        }
+        return 1;
+    }
+
+    if (strcmp(args[0], "read") == 0) { 
+        if (args[1]) {
+            fs_read(args[1]);
+        } else {
+            printf("read: missing file name\n");
+        }
+        return 1;
+    }
+
     if (strcmp(args[0], "ls") == 0) { 
         fs_ls();
         return 1;
