@@ -64,16 +64,26 @@ void fs_get_path(char *buffer, size_t size) {
         return;
     }
 
-    char temp[1024] = "";
-    Node* node = current_dir;
+    const char *segments[128];
+    int count = 0;
+    Node *node = current_dir;
 
-    while(node && node->parent){
-        char segment[1024];
-        snprintf(segment, sizeof(segment), "%s", node->name);
-        memmove(temp + strlen(segment), temp, strlen(temp) + 1);
-        memcpy(temp, segment, strlen(segment));
+    while (node != NULL && node->parent != NULL) {
+        segments[count++] = node->name;
         node = node->parent;
     }
 
-    snprintf(buffer, size, "%s", *temp ? temp : "/");
+    buffer[0] = '/';
+    buffer[1] = '\0';
+
+    for(int i = count - 1; i >= 0; i-- ) {
+        strncat(buffer, segments[i], size - strlen(buffer) - 1);
+        if(i > 0) {
+            strncat(buffer, "/", size - strlen(buffer) - 1);
+        }
+    }
+
+    if (strlen(buffer) == 0) {
+        strncpy(buffer, "/", size);
+    }
 }
