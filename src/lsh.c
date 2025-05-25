@@ -86,8 +86,28 @@ int lsh_execute(char **args) {
     // FS commands
     if (strcmp(args[0], "exit") == 0) {
         return 0;
+    } 
+    
+    if (strcmp(args[0], "cd") == 0) { 
+        if (args[1]) {
+            fs_cd(args[1]);
+        } else {
+            printf("cd: missing argument\n");
+        }
+        return 1;
     }
 
+    if (strcmp(args[0], "mkdir") == 0) { 
+        if (args[1]) {
+            fs_mkdir(args[1]);
+        } else {
+            printf("mkdir: missing argument\n");
+        }
+        return 1;
+    }
+
+    
+    printf("lsh: unknown command: %s\n", args[0]);
     return 1;
 }
 
