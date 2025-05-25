@@ -20,14 +20,14 @@ void fs_init(void) {
     current_dir = root;
 }
 
-void fs_mkdir(char *name) {
+void fs_mkdir(char *folder_directory) {
     Node *new_dir = malloc(sizeof(Node));
     if (!new_dir) {
         fprintf(stderr, "fs: allocation error\n");
         exit(EXIT_FAILURE);
     }
 
-    strncpy(new_dir->name, name, sizeof(new_dir->name) - 1);
+    strncpy(new_dir->name, folder_directory, sizeof(new_dir->name) - 1);
     new_dir->name[sizeof(new_dir->name) - 1] = '\0';
 
     new_dir->type = FOLDER_NODE;
@@ -47,8 +47,8 @@ void fs_mkdir(char *name) {
     }
 }
 
-void fs_cd(char *name) {
-    if(strcmp(name, "..") == 0) {
+void fs_cd(char *target_directory) {
+    if(strcmp(target_directory, "..") == 0) {
         if(current_dir->parent != NULL) {
             current_dir = current_dir->parent;
         }
@@ -57,14 +57,14 @@ void fs_cd(char *name) {
 
     Node *child = current_dir->first_child;
     while (child != NULL) {
-        if (child->type == FOLDER_NODE && strcmp(child->name, name) == 0) {
+        if (child->type == FOLDER_NODE && strcmp(child->name, target_directory) == 0) {
             current_dir = child;
             return;
         }
         child = child->next_sibling;
     }
 
-    printf("cd: No such directory: %s\n", name);
+    printf("cd: No such directory: %s\n", target_directory);
 }
 
 void fs_ls(void) {
@@ -85,14 +85,14 @@ void fs_ls(void) {
     printf("\n");
 }
 
-void fs_touch(char *name) {
+void fs_touch(char *file_name) {
     Node *new_file = malloc(sizeof(Node));
     if (!new_file) {
         fprintf(stderr, "fs: allocation error\n");
         exit(EXIT_FAILURE);
     }
 
-    strncpy(new_file->name, name, sizeof(new_file->name) - 1);
+    strncpy(new_file->name, file_name, sizeof(new_file->name) - 1);
     new_file->name[sizeof(new_file->name) - 1] = '\0';
 
     new_file->type = FILE_NODE;
@@ -112,25 +112,25 @@ void fs_touch(char *name) {
     }
 }
 
-fs_write(char *filename, char *text) {
+void fs_write(char *file_name, char *text) {
     Node *child = current_dir->first_child;
 
     while (child) {
-        if(child->type == FILE_NODE && strcmp(child->name, filename) == 0){
+        if(child->type == FILE_NODE && strcmp(child->name, file_name) == 0){
             free(child->content);
             child->content = strdup(text);
             return;
         }
         child = child->next_sibling;
     }
-    printf("write: file '%s' not found\n", filename);
+    printf("write: file '%s' not found\n", file_name);
 }
 
-fs_read(char *filename) {
+void fs_read(char *file_name) {
     Node *child = current_dir->first_child;
 
     while (child) {
-        if(child->type == FILE_NODE && strcmp(child->name, filename) == 0){
+        if(child->type == FILE_NODE && strcmp(child->name, file_name) == 0){
             printf("%s \n", child->content);
             return;
         } else {
@@ -138,12 +138,12 @@ fs_read(char *filename) {
         }
         child = child->next_sibling;
     }
-    printf("read: file '%s' not found\n", filename);
+    printf("read: file '%s' not found\n", file_name);
 }
 
-void fs_get_path(char *buffer, size_t size) {
+void fs_get_path(char *path_buffer, size_t buffer_size) {
     if(!current_dir) {
-        snprintf(buffer, size, "/");
+        snprintf(path_buffer, buffer_size, "/");
         return;
     }
 
@@ -156,17 +156,17 @@ void fs_get_path(char *buffer, size_t size) {
         node = node->parent;
     }
 
-    buffer[0] = '/';
-    buffer[1] = '\0';
+    path_buffer[0] = '/';
+    path_buffer[1] = '\0';
 
     for(int i = count - 1; i >= 0; i-- ) {
-        strncat(buffer, segments[i], size - strlen(buffer) - 1);
+        strncat(path_buffer, segments[i], buffer_size - strlen(path_buffer) - 1);
         if(i > 0) {
-            strncat(buffer, "/", size - strlen(buffer) - 1);
+            strncat(path_buffer, "/", buffer_size - strlen(path_buffer) - 1);
         }
     }
 
-    if (strlen(buffer) == 0) {
-        strncpy(buffer, "/", size);
+    if (strlen(path_buffer) == 0) {
+        strncpy(path_buffer, "/", buffer_size);
     }
 }
