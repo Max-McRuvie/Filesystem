@@ -65,6 +65,24 @@ void fs_cd(char *name) {
     printf("cd: No such directory: %s\n", name);
 }
 
+void fs_ls(void) {
+    if(current_dir->first_child == NULL) {
+        return;
+    }
+
+    Node *child = current_dir->first_child;
+
+    while(child) {
+        if (child->type == FOLDER_NODE) {
+            printf("%s/ ", child->name);
+        } else {
+            printf("%s ", child->name);
+        }
+        child = child->next_sibling;
+    }
+    printf("\n");
+}
+
 void fs_get_path(char *buffer, size_t size) {
     if(!current_dir) {
         snprintf(buffer, size, "/");

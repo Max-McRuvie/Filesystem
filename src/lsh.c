@@ -111,6 +111,10 @@ int lsh_execute(char **args) {
         return 1;
     }
 
+    if (strcmp(args[0], "ls") == 0) { 
+        fs_ls();
+        return 1;
+    }
     
     printf("lsh: unknown command: %s\n", args[0]);
     return 1;
