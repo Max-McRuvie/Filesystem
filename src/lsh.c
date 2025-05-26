@@ -145,6 +145,15 @@ int lsh_execute(char **args) {
         return 1;
     }
 
+    if (strcmp(args[0], "rm") == 0) { 
+        if (args[1]) {
+            fs_rm(args[1]);
+        } else {
+            printf("rm: missing file or directory name\n");
+        }
+        return 1;
+    }
+
     if (strcmp(args[0], "ls") == 0) { 
         fs_ls();
         return 1;

@@ -64,7 +64,7 @@ void fs_cd(char *target_directory) {
         child = child->next_sibling;
     }
 
-    printf("cd: No such directory: %s\n", target_directory);
+    printf("cd: no such directory: %s\n", target_directory);
 }
 
 void fs_ls(void) {
@@ -139,6 +139,27 @@ void fs_read(char *file_name) {
         child = child->next_sibling;
     }
     printf("read: file '%s' not found\n", file_name);
+}
+
+void fs_rm(char *name) {
+    Node *child = current_dir->first_child;
+
+    while (child) {
+        if(child->type == FILE_NODE && strcmp(child->name, name) == 0) {
+            free(child);
+            return;
+        } else if (child->type == FOLDER_NODE && strcmp(child->name, name) == 0) {
+            if(child->first_child == NULL) {
+                free(child);
+                return;
+            } else {
+                printf("rm: directory not empty\n");
+                return;
+            }
+        }
+        child = child->next_sibling;
+    }
+    printf("rm: file '%s' not found\n", name);
 }
 
 void fs_get_path(char *path_buffer, size_t buffer_size) {
