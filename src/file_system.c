@@ -21,29 +21,55 @@ void fs_init(void) {
 }
 
 void fs_mkdir(char *folder_directory) {
-    Node *new_dir = malloc(sizeof(Node));
-    if (!new_dir) {
-        fprintf(stderr, "fs: allocation error\n");
-        exit(EXIT_FAILURE);
-    }
+    char path_copy[256];
+    strncpy(path_copy, folder_directory, sizeof(path_copy));
+    path_copy[sizeof(path_copy) - 1] = '\0';
 
-    strncpy(new_dir->name, folder_directory, sizeof(new_dir->name) - 1);
-    new_dir->name[sizeof(new_dir->name) - 1] = '\0';
+    char *token = strtok(path_copy, "/");
+    Node *current = current_dir;
 
-    new_dir->type = FOLDER_NODE;
-    new_dir->parent = current_dir;
-    new_dir->first_child = NULL;
-    new_dir->next_sibling = NULL;
-    new_dir->content = NULL;
+    while (token != NULL) {
+        Node *child = current_dir->first_child;
+        Node *existing = NULL;
 
-    if (current_dir->first_child == NULL) {
-        current_dir->first_child = new_dir;
-    } else {
-        Node *sibling = current_dir->first_child;
-        while (sibling->next_sibling != NULL) {
-            sibling = sibling->next_sibling;
+        while (child) {
+            if(strcmp(child->name, token) == 0 && child->type == FOLDER_NODE) {
+                existing = child;
+                break;
+            }
+            child = child->next_sibling;
         }
-        sibling->next_sibling = new_dir;
+
+        if (existing) {
+            current = existing;
+        } else {
+            Node *new_dir = malloc(sizeof(Node));
+            if (!new_dir) {
+                fprintf(stderr, "fs: allocation error\n");
+                exit(EXIT_FAILURE);
+            }
+
+            strncpy(new_dir->name, token, sizeof(new_dir->name));
+            new_dir->name[sizeof(new_dir->name) - 1] = '\0';
+
+            new_dir->type = FOLDER_NODE;
+            new_dir->parent = current;
+            new_dir->first_child = NULL;
+            new_dir->next_sibling = NULL;
+            new_dir->content = NULL;
+
+            if(current->first_child == NULL) {
+            current->first_child = new_dir;
+            } else {
+                Node *sibling = current->first_child;
+                while (sibling->next_sibling != NULL) {
+                    sibling = sibling->next_sibling;
+                }
+                sibling->next_sibling = new_dir;
+            }
+            current = new_dir;
+        }
+        token = strtok(NULL, "/");
     }
 }
 
